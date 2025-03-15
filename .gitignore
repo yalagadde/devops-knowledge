@@ -1,5 +1,6 @@
 # Local .terraform directories
 **/.terraform/*
+**/builds/*
 
 # .tfstate files
 *.tfstate
@@ -27,7 +28,7 @@ override.tf.json
 terraform.rc
 
 # Lock files (uncommenting this if you want to include lock files in git)
-# .terraform.lock.hcl
+.terraform.lock.hcl
 
 # Ignore Mac system files
 .DS_Store
