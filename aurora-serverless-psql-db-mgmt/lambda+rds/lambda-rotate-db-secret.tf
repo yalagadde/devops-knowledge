@@ -5,22 +5,6 @@ resource "aws_lambda_layer_version" "psycopg2_layer" {
   filename            = "./psycopg2-layer.zip"
 }
 
-# module "lambda_psycopg2_layer" {
-#   source = "../modules/lambda"
-
-#   create_layer = true
-#   layer_name          = "psycopg2-layer"
-#   description         = "Psycopg2 PostgreSQL driver for AWS Lambda"
-#   compatible_runtimes = ["python3.9"]
-#   source_path = "./psycopg2-layer.zip"
-
-#   tags = {
-#     Environment = "dev"
-#     Project     = "aurora-serverless"
-#     Zone        = "db-zone"
-#   }
-# }
-
 module "lambda_rotate_db_secret" {
   source = "../modules/lambda"
 
@@ -71,12 +55,16 @@ module "lambda_rotate_db_secret" {
       }
     ]
   })
-
-  # layers attribute should be moved to the aws_lambda_function resource inside the module
-
   tags = {
     Environment = "dev"
     Project     = "aurora-serverless"
     Zone        = "db-zone"
   }
+}
+
+resource "aws_lambda_permission" "AllowSecretsManager" {
+  statement_id  = "AllowSecretsManager"
+  action        = "lambda:InvokeFunction"
+  function_name = module.lambda_rotate_db_secret.this.lambda_function_name
+  principal     = "secretsmanager.amazonaws.com"
 }

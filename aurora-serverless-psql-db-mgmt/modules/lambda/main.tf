@@ -16,7 +16,6 @@ module "this" {
   role_name = var.role_name
   policy_name = var.policy_name
   layers = var.layers
-
   tags = merge(
     var.tags
   )
