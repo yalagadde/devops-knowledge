@@ -40,8 +40,7 @@ resource "aws_secretsmanager_secret_policy" "db_user_secrets" {
         Condition = {
           StringNotLike = {
             "aws:userId" = flatten(concat([
-              "*:${each.key}",
-              "*:vyalagadde@palo-it.com"
+              "*:${each.key}"
             ]))
           },
           ArnNotEquals = {
