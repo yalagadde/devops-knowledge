@@ -45,7 +45,7 @@ resource "aws_secretsmanager_secret_policy" "db_user_secrets" {
             ]))
           },
           ArnNotEquals = {
-            "aws:PrincipalArn" = "${data.aws_lambda_function.psql_rotate_secret.role}"
+            "aws:PrincipalArn" = "${module.lambda_rotate_db_secret.this.lambda_function_arn}"
           }
         }
       }
@@ -56,7 +56,7 @@ resource "aws_secretsmanager_secret_policy" "db_user_secrets" {
 resource "aws_secretsmanager_secret_rotation" "db_user_secrets" {
   for_each            = aws_secretsmanager_secret.db_user_secrets
   secret_id           = each.value.id
-  rotation_lambda_arn = data.aws_lambda_function.psql_rotate_secret.arn
+  rotation_lambda_arn = module.lambda_rotate_db_secret.this.lambda_function_arn
   rotation_rules {
     automatically_after_days = 1
   }

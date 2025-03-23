@@ -24,7 +24,18 @@ data "aws_kms_key" "secretsmanager" {
   key_id = "alias/aws/secretsmanager"
 }
 
-# Lambda function for secret rotation (if it exists already)
-data "aws_lambda_function" "psql_rotate_secret" {
-  function_name = module.lambda_rotate_db_secret.this.lambda_function_name
+data "aws_secretsmanager_secret" "rds_cluster" {
+  arn = module.psql_app_serverless_v2_db.this.cluster_master_user_secret[0].secret_arn
+}
+
+data "aws_secretsmanager_secret" "rds_user_password" {
+  for_each = local.sql_users_map
+  name     = "rds-db-credentials/${module.psql_app_serverless_v2_db.this.cluster_resource_id}/${each.key}"
+
+  depends_on = [aws_secretsmanager_secret_version.db_user_secrets]
+}
+
+data "aws_secretsmanager_secret_version" "rds_user_password" {
+  for_each  = local.sql_users_map
+  secret_id = data.aws_secretsmanager_secret.rds_user_password[each.key].id
 }
